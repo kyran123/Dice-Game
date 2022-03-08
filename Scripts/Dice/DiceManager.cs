@@ -17,11 +17,11 @@ public class DiceManager : MonoBehaviour
             }
             if(Input.GetKeyDown(KeyCode.Space)) {
                 dice[index].logged = false;
-                diceRB[index].AddForce(new Vector3(0f, 500f, 0f), ForceMode.Force);
+                diceRB[index].AddForce(new Vector3(0f, 700f, 0f), ForceMode.Force);
                 diceRB[index].AddTorque(new Vector3(
-                    Random.Range(-75f, 75f),
-                    Random.Range(-75f, 75f),
-                    Random.Range(-75f, 75f)
+                    Random.Range(-175f, 175f),
+                    Random.Range(-175f, 175f),
+                    Random.Range(-175f, 175f)
                 ));
             }
         }

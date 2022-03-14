@@ -2,28 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour{
+public class Enemy : MonoBehaviour {
 
-    private int HP;
-    int damage { get;}
-    private int MinRoll;
+    private EnemyDisplay display;
+
+    [SerializeField]
+    public string Name;
+    public int HP;
+    public int damage;
+    public int minRoll;
+
+
+
+    void Start() {
+        this.display = this.GetComponent<EnemyDisplay>();
+        BattleManager._instance.OnEnemyDamage += this.ModifyHP;
+        BattleManager._instance.checkMinRoll += this.checkMinRoll;
+    }
 
     // positive -> healing , negative -> damage
-    public void ModifyHP(int value)
+    public void ModifyHP(object sender, eventArgs e)
     {
-        HP += value;
+        HP += e.damage;
+        this.display.updateDisplay();
         if(HP<=0)
         {
             //die
-            //check for player death
+            
         }
     }
 
-    public bool checkMinRoll(int value)
-    {
-        if(value >= MinRoll)
-        return true;
-        else return false;
+    public void checkMinRoll(object sender, eventArgs e)
+    {   
+        BattleManager bm = sender as BattleManager;
+        if(e.roll >= this.minRoll)
+        bm.attackEnemy(this.damage);
+        else bm.attackPlayer();
     }
-
 }

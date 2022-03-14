@@ -14,7 +14,7 @@ public class BattleManager : MonoBehaviour {
     //Event handlers
     public event EventHandler<eventArgs> OnEnemyDamage;
     public event EventHandler<eventArgs> OnPlayerDamage;
-    public event EventHandler<eventArgs> checkMinRoll;
+    public event EventHandler<eventArgs> OnRoll;
 
     void Awake() {
         if (_instance != null && _instance != this) { 
@@ -26,19 +26,20 @@ public class BattleManager : MonoBehaviour {
 
     public void attack(List<int> rolls) {
         int totalValue = rolls.Sum();
-        this.checkMinRoll?.Invoke(this, new eventArgs { roll = totalValue });
+        this.OnRoll?.Invoke(this, new eventArgs { roll = totalValue });
     }
 
-    public void attackEnemy(int value) { 
-        this.OnEnemyDamage?.Invoke(this, new eventArgs { damage = -value } );
+    public void attackEnemy(int value) {
+        this.OnEnemyDamage?.Invoke(this, new eventArgs { damage = value } );
     }
 
-    public void attackPlayer() {
-        this.OnPlayerDamage?.Invoke(this, new eventArgs { damage = -this.player.damage } );
+    public void ModifyPlayerHP(int value) {
+        this.OnPlayerDamage?.Invoke(this, new eventArgs { damage = value } );
     }
 }
 
 public class eventArgs : EventArgs {
     public int roll;
     public int damage;
+    public int coins;
 }

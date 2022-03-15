@@ -20,11 +20,13 @@ public class Enemy : MonoBehaviour {
 
     // positive -> healing , negative -> damage
     public void ModifyHP(object sender, eventArgs e) {
+        BattleManager bm = sender as BattleManager;
         HP += e.damage;
         this.display.updateDisplay();
         if(HP <= 0 ) {
             //die
-            
+            bm.enemyDeath();
+            Destroy(this.gameObject);
         }
     }
 
@@ -32,7 +34,7 @@ public class Enemy : MonoBehaviour {
     {   
         BattleManager bm = sender as BattleManager;
         if(e.roll >= this.minRoll)
-        bm.attackEnemy(this.damage);
+        bm.attackEnemy(-this.damage);
         else bm.ModifyPlayerHP(-bm.player.damage);
     }
 }

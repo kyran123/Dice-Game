@@ -15,6 +15,7 @@ public class Player : MonoBehaviour {
     void Start() {
         updateDisplay();
         BattleManager._instance.OnPlayerDamage += this.ModifyHP;
+        BattleManager._instance.OnReward += this.ModifyCoins;
     }
 
     // positive -> healing , negative -> damage
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour {
     public void ModifyCoins(object sender, eventArgs e) {
         if(e.coins < 0 && coins < Mathf.Abs(e.coins)) return;
         coins += e.coins;
+        updateDisplay();
     }
 
     public void updateDisplay() {

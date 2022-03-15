@@ -35,6 +35,10 @@ public class Item : MonoBehaviour
 
     void OnMouseDown()
     {
+        if(this.transform.parent.name == "NewItem") {
+            //Add item to player
+            
+        }
         doDamage();
     }
 
@@ -63,6 +67,7 @@ public class Item : MonoBehaviour
 }
 
 public enum Items {
+    empty,
     rollHeal, //heal 1 when you roll 5
     doDamage //do 1 damage
 }

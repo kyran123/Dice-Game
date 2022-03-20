@@ -10,6 +10,7 @@ public class BattleManager : MonoBehaviour {
 
     public GameObject cardContainer;
     public Player player;
+    public int plusRolls = 0;
 
     //Event handlers
     public event EventHandler<eventArgs> OnEnemyDamage;
@@ -17,6 +18,7 @@ public class BattleManager : MonoBehaviour {
     public event EventHandler<eventArgs> OnRoll;
     public event EventHandler<eventArgs> OnEnemyDeath;
     public event EventHandler<eventArgs> OnReward;
+    public event EventHandler<eventArgs> OnModifyCoins;
 
     void Awake() {
         if (_instance != null && _instance != this) { 
@@ -26,9 +28,10 @@ public class BattleManager : MonoBehaviour {
         } 
     }
 
-    public void enemyDeath()
+    public void enemyDeath(Enemy Enemy)
     {
-        this.OnEnemyDeath?.Invoke(this, new eventArgs {});
+        this.OnEnemyDeath?.Invoke(Enemy, new eventArgs {});
+        Destroy(Enemy.gameObject);
     }
 
     public void giveReward(eventArgs args)
@@ -36,10 +39,19 @@ public class BattleManager : MonoBehaviour {
         this.OnReward?.Invoke(this, args);
     }
 
-    public void attack(List<int> rolls) 
+    public void OnDiceRoll(List<int> rolls)
     {
+        if(plusRolls > 0)
+        {
+            rolls = rolls.Select(roll => {
+                if(roll < 6) return roll + plusRolls;
+                else return roll;
+            }).ToList();
+            plusRolls = 0;
+        }
+        rolls.ForEach(roll => Debug.Log(roll));
         int totalValue = rolls.Sum();
-        this.OnRoll?.Invoke(this, new eventArgs { roll = totalValue });
+        this.OnRoll?.Invoke(this, new eventArgs { roll = totalValue, individualRolls = rolls });
     }
 
     public void attackEnemy(int value) 
@@ -47,9 +59,14 @@ public class BattleManager : MonoBehaviour {
         this.OnEnemyDamage?.Invoke(this, new eventArgs { damage = value } );
     }
 
-    public void ModifyPlayerHP(int value) 
+    public void ModifyPlayerHP(int value)
     {
         this.OnPlayerDamage?.Invoke(this, new eventArgs { damage = value } );
+    }
+
+    public void modifyCoins(int value) 
+    {
+        this.OnModifyCoins?.Invoke(this, new eventArgs { coins = value });
     }
 }
 
@@ -58,4 +75,5 @@ public class eventArgs : EventArgs {
     public int damage;
     public int coins;
     public bool item;
+    public List<int> individualRolls;
 }

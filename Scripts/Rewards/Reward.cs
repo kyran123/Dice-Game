@@ -6,7 +6,6 @@ using System;
 
 public class Reward : MonoBehaviour
 {
-
    void Start() {
         BattleManager._instance.OnEnemyDeath += this.addReward;
     }
@@ -16,7 +15,6 @@ public class Reward : MonoBehaviour
 
    public void addReward(object sender, eventArgs e)
    {
-      BattleManager bm = sender as BattleManager;
-      bm.giveReward(new eventArgs { coins = coins, item = item });
+      BattleManager._instance.giveReward(new eventArgs { coins = coins, item = item });
    }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 
 /*
@@ -24,22 +26,26 @@ using System;
 //
 //
 
-public class Item : MonoBehaviour
+public class Item : MonoBehaviour, IPointerDownHandler
 {
     void Start() {
         BattleManager._instance.OnRoll += this.rollHeal;
+        BattleManager._instance.OnPlayerDamage += this.brokenPiggybank;
+        BattleManager._instance.OnEnemyDeath += this.brokenPiggybankReward;
     }
 
-    public bool itemType; // 0 or false active / 1 or true passive
+    public bool isPassive; // 0 or false active / 1 or true passive
     public Items type; //item name
 
-    void OnMouseDown()
+    public void OnPointerDown(PointerEventData pointer)
     {
         if(this.transform.parent.name == "NewItem") {
             //Add item to player
             
         }
         doDamage();
+        plusRolls();
+        coinHeal();
     }
 
     #region Passive Items
@@ -47,10 +53,37 @@ public class Item : MonoBehaviour
     //On roll >= 5, heal 1
     public void rollHeal(object sender,eventArgs e)
     {
-        if(!itemType || this.type != Items.rollHeal) return;        
+        if(!isPassive || this.type != Items.rollHeal) return;        
         BattleManager bm = sender as BattleManager;
         if(e.roll>=5) bm.ModifyPlayerHP(1);
     }
+
+    //On all rolls 6 get rolls*10 coins
+    public void rollCoin(object sender, eventArgs e)
+    {
+        if(!isPassive || this.type != Items.rollCoin) return;  
+        BattleManager bm = sender as BattleManager;
+        if(e.individualRolls.Count() == 1) return;
+        int res = e.individualRolls.Sum(roll => 6);
+        if(res == e.individualRolls.Count()) {
+            bm.giveReward(new eventArgs {coins = e.individualRolls.Count()*10});
+        }
+    }
+
+    //2x coin rewards from battles, -2 coins on player damage
+    public void brokenPiggybank(object sender, eventArgs e)
+    {
+        if(!isPassive|| this.type != Items.brokenPiggybank) return;
+        BattleManager bm = sender as BattleManager;
+        bm.modifyCoins(-2);
+    }
+
+    public void brokenPiggybankReward(object sender, eventArgs e)
+    {
+        if(!isPassive || this.type != Items.brokenPiggybank) return;
+        Enemy en = sender as Enemy;
+        en.gameObject.GetComponent<Reward>().coins *= 2;
+    } 
 
     #endregion
 
@@ -58,9 +91,28 @@ public class Item : MonoBehaviour
 
     public void doDamage()
     {
-        if(itemType || this.type != Items.doDamage) return;
+        if(isPassive || this.type != Items.doDamage) return;
         BattleManager._instance.attackEnemy(-1);
         Destroy(this.gameObject);
+    }
+
+    //on use +1 to dice rolls, capped at 6
+    public void plusRolls()
+    {
+        if(isPassive || this.type != Items.plusRolls) return;
+        BattleManager._instance.plusRolls = 1;
+        Destroy(this.gameObject);
+    }
+
+    //heal 1 hp for 3 coins
+    public void coinHeal()
+    {
+        if(isPassive || this.type != Items.coinHeal) return;
+        if(BattleManager._instance.player.coins>=3)
+        {
+            BattleManager._instance.modifyCoins(-3);
+            BattleManager._instance.ModifyPlayerHP(1);
+        }
     }
 
     #endregion
@@ -69,5 +121,9 @@ public class Item : MonoBehaviour
 public enum Items {
     empty,
     rollHeal, //heal 1 when you roll 5
-    doDamage //do 1 damage
+    doDamage, //do 1 damage
+    rollCoin,//On all rolls 6 get rolls*10 coins - min 2 die
+    plusRolls, //add +1 to individual rolls, capped at 6
+    brokenPiggybank, //2x coin rewards from battles, -2 coins on player damage
+    coinHeal, //heal 1 hp for 3 coins
 }

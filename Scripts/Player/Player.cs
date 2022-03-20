@@ -16,6 +16,7 @@ public class Player : MonoBehaviour {
         updateDisplay();
         BattleManager._instance.OnPlayerDamage += this.ModifyHP;
         BattleManager._instance.OnReward += this.ModifyCoins;
+        BattleManager._instance.OnModifyCoins += this.ModifyCoins;
     }
 
     // positive -> healing , negative -> damage

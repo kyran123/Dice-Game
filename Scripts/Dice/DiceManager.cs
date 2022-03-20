@@ -10,14 +10,13 @@ public class DiceManager : MonoBehaviour
     public List<int> diceResults = new List<int>();
 
     void Update() {
-        if(this.diceResults.Count >= 2) {
-            BattleManager._instance.attack(this.diceResults);
+        if(this.diceResults.Count >= this.dice.Count) {
+            BattleManager._instance.OnDiceRoll(this.diceResults);
             this.diceResults.Clear();
         }
         for(int index = 0; index < dice.Count; index++) {
             if(dice[index].logged != true) {
                 if(diceRB[index].IsSleeping()) {
-                    Debug.Log(dice[index].getSide());
                     dice[index].logged = true;
                     diceResults.Add(dice[index].getSide());
                 }

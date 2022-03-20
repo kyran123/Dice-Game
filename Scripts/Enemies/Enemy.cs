@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour {
     public int damage;
     public int minRoll;
 
+
     void Start() {
         this.display = this.GetComponent<EnemyDisplay>();
         BattleManager._instance.OnEnemyDamage += this.ModifyHP;
@@ -25,8 +26,7 @@ public class Enemy : MonoBehaviour {
         this.display.updateDisplay();
         if(HP <= 0 ) {
             //die
-            bm.enemyDeath();
-            Destroy(this.gameObject);
+            bm.enemyDeath(this);
         }
     }
 

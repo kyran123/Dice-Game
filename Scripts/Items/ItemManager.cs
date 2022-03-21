@@ -10,9 +10,16 @@ public class ItemManager : MonoBehaviour
 
     public List<GameObject> allItems = new List<GameObject>();
 
+    public GameObject text;
+
     void Start() {
         BattleManager._instance.OnEnemyDeath += this.getRandomItem;
         BattleManager._instance.OnAddItemToHand += this.addItemToHand;
+        BattleManager._instance.OnRewardAdded += this.resetHandMsg;
+    }
+
+    public void resetHandMsg(object sender, eventArgs e) {
+        this.text.SetActive(false);
     }
 
     public GameObject newItemObject;
@@ -34,6 +41,7 @@ public class ItemManager : MonoBehaviour
 
     public void addItemToHand(object sender, eventArgs e) {
         if(!this.isHandFull()) {
+            BattleManager._instance.rewardAdded();
             foreach(ItemContainer container in this.itemContainers) {
                 if(container.getItem() == null) {
                     container.addItem(e.itemObject);
@@ -43,6 +51,7 @@ public class ItemManager : MonoBehaviour
         } else {
             //Hand is full and we need to select which card to discard
             Debug.Log("Hand is full!");
+            this.text.SetActive(true);
         }
     }
 

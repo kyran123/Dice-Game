@@ -63,14 +63,18 @@ public class Item : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData pointer)
     {
-        if(this.transform.parent.name == "NewItem") {
-            //Add item to player
-            BattleManager._instance.addItemToHand(this);
-            BattleManager._instance.rewardAdded();
-        } else {
-            doDamage();
-            plusRolls();
-            coinHeal();
+        if(pointer.button == PointerEventData.InputButton.Right) {
+            Destroy(this.gameObject);
+        }
+        if(pointer.button == PointerEventData.InputButton.Left) {
+            if(this.transform.parent.name == "NewItem") {
+                //Add item to player
+                BattleManager._instance.addItemToHand(this);
+            } else {
+                doDamage();
+                plusRolls();
+                coinHeal();
+            }
         }
     }
 

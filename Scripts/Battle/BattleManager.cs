@@ -13,6 +13,7 @@ public class BattleManager : MonoBehaviour {
     public int plusRolls = 0;
 
     //Event handlers
+    public event EventHandler<eventArgs> OnBattle;          //When battle starts
     public event EventHandler<eventArgs> OnEnemyDamage;     //When enemy takes damage
     public event EventHandler<eventArgs> OnPlayerDamage;    //When player takes damage
     public event EventHandler<eventArgs> OnRoll;            //When player has rolled

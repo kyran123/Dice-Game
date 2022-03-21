@@ -13,12 +13,15 @@ public class BattleManager : MonoBehaviour {
     public int plusRolls = 0;
 
     //Event handlers
-    public event EventHandler<eventArgs> OnEnemyDamage;
-    public event EventHandler<eventArgs> OnPlayerDamage;
-    public event EventHandler<eventArgs> OnRoll;
-    public event EventHandler<eventArgs> OnEnemyDeath;
-    public event EventHandler<eventArgs> OnReward;
-    public event EventHandler<eventArgs> OnModifyCoins;
+    public event EventHandler<eventArgs> OnEnemyDamage;     //When enemy takes damage
+    public event EventHandler<eventArgs> OnPlayerDamage;    //When player takes damage
+    public event EventHandler<eventArgs> OnRoll;            //When player has rolled
+    public event EventHandler<eventArgs> OnEnemyDeath;      //When enemy dies
+    public event EventHandler<eventArgs> OnReward;          //When reward is given to player
+    public event EventHandler<eventArgs> OnModifyCoins;     //Modify coins event
+    public event EventHandler<eventArgs> OnAddItem;         //Add item event
+    public event EventHandler<eventArgs> OnAddItemToHand;   //Add item to hand event
+    public event EventHandler<eventArgs> OnRewardAdded;     //When item has been added
 
     void Awake() {
         if (_instance != null && _instance != this) { 
@@ -34,9 +37,21 @@ public class BattleManager : MonoBehaviour {
         Destroy(Enemy.gameObject);
     }
 
+    public void showNewItem(GameObject item) {
+        this.OnAddItem?.Invoke(this, new eventArgs { itemObject = item });
+    }
+
+    public void addItemToHand(Item item) {
+        this.OnAddItemToHand?.Invoke(item, new eventArgs { itemObject = item.gameObject });
+    }
+
     public void giveReward(eventArgs args)
     {
         this.OnReward?.Invoke(this, args);
+    }
+
+    public void rewardAdded() {
+        this.OnRewardAdded?.Invoke(this, new eventArgs {});
     }
 
     public void OnDiceRoll(List<int> rolls)
@@ -75,5 +90,6 @@ public class eventArgs : EventArgs {
     public int damage;
     public int coins;
     public bool item;
+    public GameObject itemObject;
     public List<int> individualRolls;
 }

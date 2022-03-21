@@ -15,6 +15,6 @@ public class Reward : MonoBehaviour
 
    public void addReward(object sender, eventArgs e)
    {
-      BattleManager._instance.giveReward(new eventArgs { coins = coins, item = item });
+      BattleManager._instance.giveReward(new eventArgs { coins = coins });
    }
 }

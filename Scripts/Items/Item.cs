@@ -41,11 +41,13 @@ public class Item : MonoBehaviour, IPointerDownHandler
     {
         if(this.transform.parent.name == "NewItem") {
             //Add item to player
-            
+            BattleManager._instance.addItemToHand(this);
+            BattleManager._instance.rewardAdded();
+        } else {
+            doDamage();
+            plusRolls();
+            coinHeal();
         }
-        doDamage();
-        plusRolls();
-        coinHeal();
     }
 
     #region Passive Items

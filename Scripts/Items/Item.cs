@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 
 /*
@@ -38,10 +39,12 @@ public class Item : MonoBehaviour, IPointerDownHandler
         BattleManager._instance.OnPlayerDamage += this.brokenPiggybank;
         BattleManager._instance.OnEnemyDeath += this.brokenPiggybankReward;
         BattleManager._instance.OnBattle += this.resetUsed;
+        this.Description.text = this.generateDescription();
     }
 
     public void resetUsed(object sender, eventArgs e) {
         this.used = false;
+        this.transform.localPosition = Vector3.zero;
     }
 
     [Tooltip("0 for active, 1 for passive")]
@@ -53,6 +56,10 @@ public class Item : MonoBehaviour, IPointerDownHandler
     public bool destroyOnUse; //If the item gets destroyed on use
 
     public Items type; //item name
+
+    [Header("TMPro")]
+    public TMP_Text title;
+    public TMP_Text Description;
 
     public void OnPointerDown(PointerEventData pointer)
     {
@@ -125,6 +132,7 @@ public class Item : MonoBehaviour, IPointerDownHandler
     {
         if(!this.validate(ItemType.Active, Items.doDamage)) return;
         this.used = true;
+        if(this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
         BattleManager._instance.attackEnemy(-1);
         Destroy(this.gameObject);
     }
@@ -134,6 +142,7 @@ public class Item : MonoBehaviour, IPointerDownHandler
     {
         if(!this.validate(ItemType.Active, Items.plusRolls)) return;
         this.used = true;
+        if(this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
         BattleManager._instance.plusRolls = 1;
         Destroy(this.gameObject);
     }
@@ -145,6 +154,7 @@ public class Item : MonoBehaviour, IPointerDownHandler
         if(BattleManager._instance.player.coins>=3)
         {
             this.used = true;
+            if(this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
             BattleManager._instance.modifyCoins(-3);
             BattleManager._instance.ModifyPlayerHP(1);
         }
@@ -154,6 +164,33 @@ public class Item : MonoBehaviour, IPointerDownHandler
 
     public string generateDescription() {
         //Generate string for description here
+        switch(this.type) {
+            case Items.brokenPiggybank:
+                this.title.text = "Broken piggybank";
+                return $"{this.getConditional()}Lose 2 coins on damage. Gain double the rewards of battle.";
+            case Items.rollCoin:
+                this.title.text = "Roll Coin";
+                return $"{this.getConditional()}Get 10 coins per dice every time all of them roll 6 (Minimum 2 die).";
+            case Items.rollHeal:
+                this.title.text = "Roll Heal";
+                return $"{this.getConditional()}Heal 1 HP whenever you roll at least 5.";
+            case Items.doDamage:
+                this.title.text = "Do Damage";
+                return $"{this.getConditional()}Do 1 damage to the enemy.";
+            case Items.plusRolls:
+                this.title.text = "Plus Rolls";
+                return $"{this.getConditional()}Add +1 to all individual rolls (max 6).";
+            case Items.coinHeal:
+                this.title.text = "Coin Heal";
+                return $"{this.getConditional()}Spend 3 coins to heal 1 HP.";
+            default:
+                return "";
+        }
+    }
+
+    public string getConditional() {
+        if(this.destroyOnUse) return "Destroy this. ";
+        if(this.oncePerBattle) return "Once per battle. ";
         return "";
     }
 }

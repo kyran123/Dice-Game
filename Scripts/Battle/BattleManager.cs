@@ -4,8 +4,9 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-public class BattleManager : MonoBehaviour {
-    
+public class BattleManager : MonoBehaviour
+{
+
     public static BattleManager _instance { get; private set; }
 
     public GameObject cardContainer;
@@ -23,27 +24,41 @@ public class BattleManager : MonoBehaviour {
     public event EventHandler<eventArgs> OnAddItem;         //Add item event
     public event EventHandler<eventArgs> OnAddItemToHand;   //Add item to hand event
     public event EventHandler<eventArgs> OnRewardAdded;     //When item has been added
+    public event EventHandler<eventArgs> OnRemoveRandomItem;//When removing random item
+    public event EventHandler<eventArgs> OnModifyEnemyDamage;//When modifying enemy damage
+    public event EventHandler<eventArgs> OnModifyMinRolls;  //When modifying minRolls
 
-    void Awake() {
-        if (_instance != null && _instance != this) { 
+    void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
             Destroy(this);
-        } else { 
+        }
+        else
+        {
             _instance = this;
-        } 
+        }
     }
 
     public void enemyDeath(Enemy Enemy)
     {
-        this.OnEnemyDeath?.Invoke(Enemy, new eventArgs {});
+        this.OnEnemyDeath?.Invoke(Enemy, new eventArgs { });
         Destroy(Enemy.gameObject);
     }
 
-    public void showNewItem(GameObject item) {
+    public void showNewItem(GameObject item)
+    {
         this.OnAddItem?.Invoke(this, new eventArgs { itemObject = item });
     }
 
-    public void addItemToHand(Item item) {
+    public void addItemToHand(Item item)
+    {
         this.OnAddItemToHand?.Invoke(item, new eventArgs { itemObject = item.gameObject });
+    }
+
+    public void removeRandomItem()
+    {
+        this.OnRemoveRandomItem?.Invoke(this, new eventArgs { });
     }
 
     public void giveReward(eventArgs args)
@@ -51,16 +66,18 @@ public class BattleManager : MonoBehaviour {
         this.OnReward?.Invoke(this, args);
     }
 
-    public void rewardAdded() {
-        this.OnRewardAdded?.Invoke(this, new eventArgs {});
+    public void rewardAdded()
+    {
+        this.OnRewardAdded?.Invoke(this, new eventArgs { });
     }
 
     public void OnDiceRoll(List<int> rolls)
     {
-        if(plusRolls > 0)
+        if (plusRolls > 0)
         {
-            rolls = rolls.Select(roll => {
-                if(roll < 6) return roll + plusRolls;
+            rolls = rolls.Select(roll =>
+            {
+                if (roll < 6) return roll + plusRolls;
                 else return roll;
             }).ToList();
             plusRolls = 0;
@@ -68,25 +85,37 @@ public class BattleManager : MonoBehaviour {
         rolls.ForEach(roll => Debug.Log(roll));
         int totalValue = rolls.Sum();
         this.OnRoll?.Invoke(this, new eventArgs { roll = totalValue, individualRolls = rolls });
+
     }
 
-    public void attackEnemy(int value) 
+    public void ModifyEnemyHP(int value)
     {
-        this.OnEnemyDamage?.Invoke(this, new eventArgs { damage = value } );
+        this.OnEnemyDamage?.Invoke(this, new eventArgs { damage = value });
+    }
+
+    public void modifyEnemyDamage(int value)
+    {
+        this.OnModifyEnemyDamage?.Invoke(this, new eventArgs { damage = value });
+    }
+
+    public void modifyMinRolls(int value)
+    {
+        this.OnModifyMinRolls?.Invoke(this, new eventArgs { roll = value });
     }
 
     public void ModifyPlayerHP(int value)
     {
-        this.OnPlayerDamage?.Invoke(this, new eventArgs { damage = value } );
+        this.OnPlayerDamage?.Invoke(this, new eventArgs { damage = value });
     }
 
-    public void modifyCoins(int value) 
+    public void modifyCoins(int value)
     {
         this.OnModifyCoins?.Invoke(this, new eventArgs { coins = value });
     }
 }
 
-public class eventArgs : EventArgs {
+public class eventArgs : EventArgs
+{
     public int roll;
     public int damage;
     public int coins;

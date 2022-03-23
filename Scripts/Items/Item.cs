@@ -27,14 +27,16 @@ using TMPro;
 //
 //
 
-public enum ItemType {
+public enum ItemType
+{
     Passive,
     Active
 }
 
 public class Item : MonoBehaviour, IPointerDownHandler
 {
-    void Start() {
+    void Start()
+    {
         BattleManager._instance.OnRoll += this.rollHeal;
         BattleManager._instance.OnPlayerDamage += this.brokenPiggybank;
         BattleManager._instance.OnEnemyDeath += this.brokenPiggybankReward;
@@ -42,7 +44,8 @@ public class Item : MonoBehaviour, IPointerDownHandler
         this.Description.text = this.generateDescription();
     }
 
-    public void resetUsed(object sender, eventArgs e) {
+    public void resetUsed(object sender, eventArgs e)
+    {
         this.used = false;
         this.transform.localPosition = Vector3.zero;
     }
@@ -63,14 +66,19 @@ public class Item : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData pointer)
     {
-        if(pointer.button == PointerEventData.InputButton.Right) {
+        if (pointer.button == PointerEventData.InputButton.Right)
+        {
             Destroy(this.gameObject);
         }
-        if(pointer.button == PointerEventData.InputButton.Left) {
-            if(this.transform.parent.name == "NewItem") {
+        if (pointer.button == PointerEventData.InputButton.Left)
+        {
+            if (this.transform.parent.name == "NewItem")
+            {
                 //Add item to player
                 BattleManager._instance.addItemToHand(this);
-            } else {
+            }
+            else
+            {
                 doDamage();
                 plusRolls();
                 coinHeal();
@@ -78,54 +86,56 @@ public class Item : MonoBehaviour, IPointerDownHandler
         }
     }
 
-    public bool validate(ItemType iType, Items t) {
-        if(this.itemType != iType) return false;
-        if(this.type != t) return false;
-        if(this.oncePerBattle && this.used) return false;
+    public bool validate(ItemType iType, Items t)
+    {
+        if (this.itemType != iType) return false;
+        if (this.type != t) return false;
+        if (this.oncePerBattle && this.used) return false;
         return true;
     }
 
     #region Passive Items
 
     //On roll >= 5, heal 1
-    public void rollHeal(object sender,eventArgs e)
+    public void rollHeal(object sender, eventArgs e)
     {
-        if(!this.validate(ItemType.Passive, Items.rollHeal)) return;  
+        if (!this.validate(ItemType.Passive, Items.rollHeal)) return;
         BattleManager bm = sender as BattleManager;
         this.used = true;
-        if(e.roll>=5) bm.ModifyPlayerHP(1);
+        if (e.roll >= 5) bm.ModifyPlayerHP(1);
     }
 
     //On all rolls 6 get rolls*10 coins
     public void rollCoin(object sender, eventArgs e)
     {
-        if(!this.validate(ItemType.Passive, Items.rollCoin)) return;
+        if (!this.validate(ItemType.Passive, Items.rollCoin)) return;
         BattleManager bm = sender as BattleManager;
-        if(e.individualRolls.Count() == 1) return;
+        if (e.individualRolls.Count() == 1) return;
         int res = e.individualRolls.Sum(roll => 6);
-        if(res == e.individualRolls.Count()) {
+        if (res == e.individualRolls.Count())
+        {
             this.used = true;
-            bm.giveReward(new eventArgs {coins = e.individualRolls.Count()*10});
+            bm.giveReward(new eventArgs { coins = e.individualRolls.Count() * 10 });
         }
     }
 
     //2x coin rewards from battles, -2 coins on player damage
     public void brokenPiggybank(object sender, eventArgs e)
     {
-        if(!this.validate(ItemType.Passive, Items.brokenPiggybank)) return;
+        if (!this.validate(ItemType.Passive, Items.brokenPiggybank)) return;
         BattleManager bm = sender as BattleManager;
-        if(e.damage > 0) return;
+        if (e.damage > 0) return;
         this.used = true;
         bm.modifyCoins(-2);
     }
 
     public void brokenPiggybankReward(object sender, eventArgs e)
     {
-        if(!this.validate(ItemType.Passive, Items.brokenPiggybank)) return;
+        if (!this.validate(ItemType.Passive, Items.brokenPiggybank)) return;
         Enemy en = sender as Enemy;
         this.used = true;
         en.gameObject.GetComponent<Reward>().coins *= 2;
-    } 
+    }
 
     #endregion
 
@@ -134,19 +144,19 @@ public class Item : MonoBehaviour, IPointerDownHandler
     //Deal 1 damage
     public void doDamage()
     {
-        if(!this.validate(ItemType.Active, Items.doDamage)) return;
+        if (!this.validate(ItemType.Active, Items.doDamage)) return;
         this.used = true;
-        if(this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
-        BattleManager._instance.attackEnemy(-1);
+        if (this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
+        BattleManager._instance.ModifyEnemyHP(-1);
         Destroy(this.gameObject);
     }
 
     //on use +1 to dice rolls, capped at 6
     public void plusRolls()
     {
-        if(!this.validate(ItemType.Active, Items.plusRolls)) return;
+        if (!this.validate(ItemType.Active, Items.plusRolls)) return;
         this.used = true;
-        if(this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
+        if (this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
         BattleManager._instance.plusRolls = 1;
         Destroy(this.gameObject);
     }
@@ -154,11 +164,11 @@ public class Item : MonoBehaviour, IPointerDownHandler
     //heal 1 hp for 3 coins
     public void coinHeal()
     {
-        if(!this.validate(ItemType.Active, Items.coinHeal)) return;
-        if(BattleManager._instance.player.coins>=3)
+        if (!this.validate(ItemType.Active, Items.coinHeal)) return;
+        if (BattleManager._instance.player.coins >= 3)
         {
             this.used = true;
-            if(this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
+            if (this.oncePerBattle) this.transform.localPosition = new Vector3(0f, -5f, 0f);
             BattleManager._instance.modifyCoins(-3);
             BattleManager._instance.ModifyPlayerHP(1);
         }
@@ -166,9 +176,11 @@ public class Item : MonoBehaviour, IPointerDownHandler
 
     #endregion
 
-    public string generateDescription() {
+    public string generateDescription()
+    {
         //Generate string for description here
-        switch(this.type) {
+        switch (this.type)
+        {
             case Items.brokenPiggybank:
                 this.title.text = "Broken piggybank";
                 return $"{this.getConditional()}Lose 2 coins on damage. Gain double the rewards of battle.";
@@ -192,14 +204,16 @@ public class Item : MonoBehaviour, IPointerDownHandler
         }
     }
 
-    public string getConditional() {
-        if(this.destroyOnUse) return "Destroy this. ";
-        if(this.oncePerBattle) return "Once per battle. ";
+    public string getConditional()
+    {
+        if (this.destroyOnUse) return "Destroy this. ";
+        if (this.oncePerBattle) return "Once per battle. ";
         return "";
     }
 }
 
-public enum Items {
+public enum Items
+{
     empty,
     rollHeal, //heal 1 when you roll 5
     doDamage, //do 1 damage

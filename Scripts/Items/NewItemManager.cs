@@ -29,6 +29,7 @@ public class NewItemManager : MonoBehaviour
     public void skip() {
         //Call Battlemanager to show the path cards
         this.ItemContainer.removeItem();
-        this.toggle(false);     
+        BattleManager._instance.toggleScreen(screen.Path);
+        this.toggle(false);
     }
 }

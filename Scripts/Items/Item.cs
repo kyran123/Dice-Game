@@ -76,6 +76,7 @@ public class Item : MonoBehaviour, IPointerDownHandler
             {
                 //Add item to player
                 BattleManager._instance.addItemToHand(this);
+                BattleManager._instance.toggleScreen(screen.Path);
             }
             else
             {

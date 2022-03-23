@@ -28,6 +28,8 @@ public class BattleManager : MonoBehaviour
     public event EventHandler<eventArgs> OnModifyEnemyDamage;//When modifying enemy damage
     public event EventHandler<eventArgs> OnModifyMinRolls;  //When modifying minRolls
 
+    public event EventHandler<eventArgs> OnToggleScreen; //Toggling screen
+
     void Awake()
     {
         if (_instance != null && _instance != this)
@@ -112,6 +114,11 @@ public class BattleManager : MonoBehaviour
     {
         this.OnModifyCoins?.Invoke(this, new eventArgs { coins = value });
     }
+
+    public void toggleScreen(screen screen) 
+    {
+        this.OnToggleScreen?.Invoke(this, new eventArgs { screenValue = screen });
+    }
 }
 
 public class eventArgs : EventArgs
@@ -122,4 +129,12 @@ public class eventArgs : EventArgs
     public bool item;
     public GameObject itemObject;
     public List<int> individualRolls;
+    public screen screenValue;
+}
+
+public enum screen {
+    Battle,
+    Path,
+    Event,
+    GameOver
 }

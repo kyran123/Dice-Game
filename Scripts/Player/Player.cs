@@ -17,6 +17,7 @@ public class Player : MonoBehaviour {
         BattleManager._instance.OnPlayerDamage += this.ModifyHP;
         BattleManager._instance.OnReward += this.ModifyCoins;
         BattleManager._instance.OnModifyCoins += this.ModifyCoins;
+        BattleManager._instance.OnToggleScreen += this.toggle;
     }
 
     // positive -> healing , negative -> damage
@@ -40,5 +41,10 @@ public class Player : MonoBehaviour {
         this.HPText.text = $"{this.HP}";
         this.damageText.text = $"{this.damage}";
         this.coinsText.text = $"{this.coins}";
+    }
+
+    public void toggle(object sender, eventArgs e) {
+        if(e.screenValue != screen.GameOver) this.gameObject.SetActive(true);
+        else this.gameObject.SetActive(false);
     }
 }

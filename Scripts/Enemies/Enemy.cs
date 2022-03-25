@@ -12,7 +12,10 @@ public class Enemy : MonoBehaviour
     public int HP;
     public int damage;
     public int minRoll;
+    [Range(1, 4), Tooltip("1 -> Easy, 2 -> Medium, 3 -> Hard, 4 -> Elite")]
+    public int difficultyValue;
 
+    public List<GameObject> allEnemeis = new List<GameObject>();
 
     void Start()
     {

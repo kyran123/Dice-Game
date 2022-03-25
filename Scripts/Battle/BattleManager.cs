@@ -12,6 +12,8 @@ public class BattleManager : MonoBehaviour
     public GameObject cardContainer;
     public Player player;
     public int plusRolls = 0;
+    public int level = 1;
+    public int easyRange, mediumRange, hardRange;
 
     //Event handlers
     public event EventHandler<eventArgs> OnBattle;          //When battle starts
@@ -27,8 +29,10 @@ public class BattleManager : MonoBehaviour
     public event EventHandler<eventArgs> OnRemoveRandomItem;//When removing random item
     public event EventHandler<eventArgs> OnModifyEnemyDamage;//When modifying enemy damage
     public event EventHandler<eventArgs> OnModifyMinRolls;  //When modifying minRolls
-
-    public event EventHandler<eventArgs> OnToggleScreen; //Toggling screen
+    
+    public event EventHandler<eventArgs> OnGenerateEnemy;   //When a new enemy is generated
+    
+    public event EventHandler<eventArgs> OnToggleScreen;    //Toggling screen
 
     void Awake()
     {
@@ -40,6 +44,15 @@ public class BattleManager : MonoBehaviour
         {
             _instance = this;
         }
+    }
+
+    void Start(){ //Temporary
+        generateEnemy();
+    }
+
+    public void generateEnemy()
+    {
+        this.OnGenerateEnemy?.Invoke(this, new eventArgs { });
     }
 
     public void enemyDeath(Enemy Enemy)
@@ -87,7 +100,6 @@ public class BattleManager : MonoBehaviour
         rolls.ForEach(roll => Debug.Log(roll));
         int totalValue = rolls.Sum();
         this.OnRoll?.Invoke(this, new eventArgs { roll = totalValue, individualRolls = rolls });
-
     }
 
     public void ModifyEnemyHP(int value)

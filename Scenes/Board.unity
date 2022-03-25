@@ -610,6 +610,8 @@ MonoBehaviour:
   HP: 1
   damage: 1
   minRoll: 2
+  difficultyValue: 0
+  allEnemeis: []
 --- !u!114 &312955551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +634,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312955544}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1e28c7280c4b0441b8f7427549fdb1d, type: 3}
   m_Name: 
@@ -3755,6 +3757,10 @@ MonoBehaviour:
   cardContainer: {fileID: 2006896469}
   player: {fileID: 364101500}
   plusRolls: 0
+  level: 1
+  easyRange: 0
+  mediumRange: 0
+  hardRange: 0
 --- !u!1 &1457404917
 GameObject:
   m_ObjectHideFlags: 0
@@ -4600,6 +4606,7 @@ GameObject:
   - component: {fileID: 2006896470}
   - component: {fileID: 2006896472}
   - component: {fileID: 2006896471}
+  - component: {fileID: 2006896473}
   m_Layer: 5
   m_Name: EnemyContainer
   m_TagString: Untagged
@@ -4665,6 +4672,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2006896469}
   m_CullTransparentMesh: 1
+--- !u!114 &2006896473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006896469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8b8e1dd74fb28346992c5b5e87f82f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allEnemies:
+  - {fileID: 2448000155930044760, guid: 98435248f8bcb044db0a2cc8e0672231, type: 3}
+  currentEnemy: {fileID: 0}
 --- !u!1 &2100020333
 GameObject:
   m_ObjectHideFlags: 0

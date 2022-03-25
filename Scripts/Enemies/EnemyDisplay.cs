@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EnemyDisplay : MonoBehaviour
 {
-
     private Enemy enemy;
     private Card card;
 

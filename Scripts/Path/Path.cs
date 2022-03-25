@@ -18,11 +18,12 @@ public class Path : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData pointer)
     {
+        BattleManager._instance.level ++;
         switch(type)
         {
             case pathType.Monster:
                 BattleManager._instance.toggleScreen(screen.Battle);
-                //pick enemy here
+                BattleManager._instance.generateEnemy();
             break;
         }
     }

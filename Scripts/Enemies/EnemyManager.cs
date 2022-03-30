@@ -22,8 +22,7 @@ public class EnemyManager : MonoBehaviour
         if(bm.level <= bm.mediumRange) level = 2;
         if(bm.level <= bm.hardRange) level = 3;
         List<GameObject> enemies = this.allEnemies.Where(enemy => enemy.GetComponent<Enemy>().difficultyValue == level ).ToList();
-        Enemy enemy = enemies[Random.Range(0, enemies.Count() - 1)].GetComponent<Enemy>();
-        currentEnemy = Instantiate(enemy.gameObject) as GameObject;
+        currentEnemy = Instantiate(enemies[Random.Range(0, enemies.Count() - 1)]);
         this.currentEnemy.transform.SetParent(this.transform, false);
     }
 

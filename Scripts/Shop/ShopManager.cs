@@ -1,0 +1,61 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ShopManager : MonoBehaviour
+{
+    public GameObject child;
+
+    public List<ShopItemContainer> itemContainers = new List<ShopItemContainer>();
+
+    public List<DiceContainer> diceContainers = new List<DiceContainer>();
+
+    void Start()
+    {
+        BattleManager._instance.OnToggleScreen += this.toggle;
+        BattleManager._instance.OnRemoveItem += this.updateShop;
+    }
+
+    public void generateDice()
+    {
+
+    }
+
+    public void generateItems()
+    {
+        BattleManager bm = BattleManager._instance;
+        foreach (ShopItemContainer container in this.itemContainers)
+        {
+            bm.itemManager.getNewShopItem(this.itemContainers);
+            container.addItem(bm.itemManager.shopItem);
+        }
+    }
+
+    public void updateShop(object sender, eventArgs e)
+    {
+        foreach(ShopItemContainer container in this.itemContainers)
+        {
+            container.updateItem();
+        }
+        List<Die> dice = BattleManager._instance.GetComponent<DiceManager>().dice;
+        for(int i = 0; i < dice.Count; i++)
+        {
+            diceContainers[i].addDie(dice[i]);
+        }
+    }
+
+    public void toggle(object sender, eventArgs e)
+    {
+        if (e.screenValue == screen.Shop)
+        {
+            child.SetActive(true);
+            this.generateItems();
+            this.generateDice();
+            this.updateShop(this, new eventArgs {});
+        }
+        else
+        {
+            child.SetActive(false);
+        }
+    }
+}

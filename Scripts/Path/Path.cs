@@ -25,6 +25,12 @@ public class Path : MonoBehaviour, IPointerDownHandler
                 BattleManager._instance.toggleScreen(screen.Battle);
                 BattleManager._instance.generateEnemy();
             break;
+            case pathType.Event:
+                BattleManager._instance.toggleScreen(screen.Event);
+            break;
+            case pathType.Shop:
+                BattleManager._instance.toggleScreen(screen.Shop);
+            break;
         }
     }
 

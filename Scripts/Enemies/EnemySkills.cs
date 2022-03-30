@@ -28,6 +28,17 @@ public class EnemySkills : MonoBehaviour
         BattleManager._instance.OnEnemyDamage += this.enemyDamageCondition;
     }
 
+    public void unSubscribe() 
+    {
+        BattleManager._instance.OnRoll -= this.diceRollsCondition;
+        BattleManager._instance.OnRoll -= diceRollSumCondition;
+        BattleManager._instance.OnRoll -= this.diceNumCondition;        
+        BattleManager._instance.OnEnemyDamage -= this.enemyHPCondition;
+        BattleManager._instance.OnPlayerDamage -= this.playerHPCondition;
+        BattleManager._instance.OnPlayerDamage -= this.playerDamageCondition;
+        BattleManager._instance.OnEnemyDamage -= this.enemyDamageCondition;
+    }
+    
     [Header("Conditions")]
     public skillConditions conditions;
     public List<int> diceRolls;

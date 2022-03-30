@@ -11,6 +11,7 @@ public class BattleManager : MonoBehaviour
 
     public GameObject cardContainer;
     public Player player;
+    public ItemManager itemManager;
     public int plusRolls = 0;
     public int level = 1;
     public int easyRange, mediumRange, hardRange;
@@ -28,11 +29,20 @@ public class BattleManager : MonoBehaviour
     public event EventHandler<eventArgs> OnRewardAdded;     //When item has been added
     public event EventHandler<eventArgs> OnRemoveRandomItem;//When removing random item
     public event EventHandler<eventArgs> OnModifyEnemyDamage;//When modifying enemy damage
+    public event EventHandler<eventArgs> OnModifyPlayerDamage;//When modifying player damage
     public event EventHandler<eventArgs> OnModifyMinRolls;  //When modifying minRolls
-    
+
     public event EventHandler<eventArgs> OnGenerateEnemy;   //When a new enemy is generated
-    
+    public event EventHandler<eventArgs> OnAddEventItem;    //When an event adds an item to hand
+    public event EventHandler<eventArgs> OnRedrawHand;      //When an event redraws the hand
+    public event EventHandler<eventArgs> OnHandIsFull;      //When the hand is full... or not?
+    public event EventHandler<eventArgs> OnAddDie;          //When adding a die
+    public event EventHandler<eventArgs> OnRemoveDie;       //When removing a die
+    public event EventHandler<eventArgs> OnToggleCurse;     //When toggling item removability
+    public event EventHandler<eventArgs> OnRemoveItem;      //When removing an item
+
     public event EventHandler<eventArgs> OnToggleScreen;    //Toggling screen
+
 
     void Awake()
     {
@@ -46,8 +56,19 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    void Start(){ //Temporary
+    void Start()
+    { //Temporary
         generateEnemy();
+    }
+
+    public void addDie(List<int> sides)
+    {
+        this.OnAddDie?.Invoke(this, new eventArgs { individualRolls = sides });
+    }
+
+    public void removeDie(Die d)
+    {
+        this.OnRemoveDie?.Invoke(this, new eventArgs { die = d });
     }
 
     public void generateEnemy()
@@ -55,10 +76,12 @@ public class BattleManager : MonoBehaviour
         this.OnGenerateEnemy?.Invoke(this, new eventArgs { });
     }
 
-    public void enemyDeath(Enemy Enemy)
+    public void enemyDeath(Enemy enemy)
     {
-        this.OnEnemyDeath?.Invoke(Enemy, new eventArgs { });
-        Destroy(Enemy.gameObject);
+        bool hasItemReward = enemy.itemReward;
+        this.OnEnemyDeath?.Invoke(enemy, new eventArgs { });
+        Destroy(enemy.gameObject);
+        if (!hasItemReward) this.toggleScreen(screen.Path);
     }
 
     public void showNewItem(GameObject item)
@@ -76,6 +99,11 @@ public class BattleManager : MonoBehaviour
         this.OnRemoveRandomItem?.Invoke(this, new eventArgs { });
     }
 
+    public void updateShopItems()
+    {
+        this.OnRemoveItem?.Invoke(this, new eventArgs { });
+    }
+
     public void giveReward(eventArgs args)
     {
         this.OnReward?.Invoke(this, args);
@@ -84,6 +112,21 @@ public class BattleManager : MonoBehaviour
     public void rewardAdded()
     {
         this.OnRewardAdded?.Invoke(this, new eventArgs { });
+    }
+
+    public void addEventItem(GameObject item)
+    {
+        this.OnAddEventItem?.Invoke(this, new eventArgs { itemObject = item });
+    }
+
+    public void redrawHand()
+    {
+        this.OnRedrawHand?.Invoke(this, new eventArgs { });
+    }
+
+    public void handIsFull()
+    {
+        this.OnHandIsFull?.Invoke(this, new eventArgs { });
     }
 
     public void OnDiceRoll(List<int> rolls)
@@ -112,6 +155,11 @@ public class BattleManager : MonoBehaviour
         this.OnModifyEnemyDamage?.Invoke(this, new eventArgs { damage = value });
     }
 
+    public void modifyPlayerDamage(int value)
+    {
+        this.OnModifyPlayerDamage?.Invoke(this, new eventArgs { damage = value });
+    }
+
     public void modifyMinRolls(int value)
     {
         this.OnModifyMinRolls?.Invoke(this, new eventArgs { roll = value });
@@ -127,9 +175,14 @@ public class BattleManager : MonoBehaviour
         this.OnModifyCoins?.Invoke(this, new eventArgs { coins = value });
     }
 
-    public void toggleScreen(screen screen) 
+    public void toggleScreen(screen screen)
     {
         this.OnToggleScreen?.Invoke(this, new eventArgs { screenValue = screen });
+    }
+
+    public void toggleCurse()
+    {
+        this.OnToggleCurse?.Invoke(this, new eventArgs { });
     }
 }
 
@@ -142,11 +195,14 @@ public class eventArgs : EventArgs
     public GameObject itemObject;
     public List<int> individualRolls;
     public screen screenValue;
+    public Die die;
 }
 
-public enum screen {
+public enum screen
+{
     Battle,
     Path,
     Event,
+    Shop,
     GameOver
 }

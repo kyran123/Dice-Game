@@ -18,6 +18,7 @@ public class Player : MonoBehaviour {
         BattleManager._instance.OnReward += this.ModifyCoins;
         BattleManager._instance.OnModifyCoins += this.ModifyCoins;
         BattleManager._instance.OnToggleScreen += this.toggle;
+        BattleManager._instance.OnModifyPlayerDamage += this.ModifyPlayerDamage;
     }
 
     // positive -> healing , negative -> damage
@@ -28,6 +29,13 @@ public class Player : MonoBehaviour {
             //die
             //check for player death
         }
+    }
+
+    public void ModifyPlayerDamage(object sender, eventArgs e)
+    {
+        if(damage + e.damage <= 0) damage = 1;
+        else damage += e.damage;
+        this.updateDisplay();
     }
 
     // positive -> add / negative -> subtract

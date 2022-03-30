@@ -59,6 +59,10 @@ public class Item : MonoBehaviour, IPointerDownHandler
     public bool destroyOnUse; //If the item gets destroyed on use
 
     public Items type; //item name
+    public bool removable; //curse control
+    public bool isCurse;
+
+    public int shopValue = 10;
 
     [Header("TMPro")]
     public TMP_Text title;
@@ -66,25 +70,72 @@ public class Item : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData pointer)
     {
-        if (pointer.button == PointerEventData.InputButton.Right)
+        BattleManager bm = BattleManager._instance;
+        if (this.GetComponentInParent<ShopItemContainer>() == null)
         {
-            Destroy(this.gameObject);
+            if (pointer.button == PointerEventData.InputButton.Right)
+            {
+                if (removable)
+                {
+                    if (isCurse)
+                    {
+                        bm.modifyCoins(-10);
+                        bm.toggleCurse();
+                    }
+                    this.unSubscribe();
+                    this.GetComponentInParent<ItemContainer>().removeItem();
+                    bm.updateShopItems();
+                }
+            }
+            if (pointer.button == PointerEventData.InputButton.Left)
+            {
+                if (this.transform.parent.name == "NewItem")
+                {
+                    //Add item to player
+                    if (!bm.itemManager.isHandFull(true))
+                    {
+                        bm.addItemToHand(this);
+                        bm.toggleScreen(screen.Path);
+                    }
+                    else
+                    {
+                        bm.itemManager.text.SetActive(true);
+                    }
+                }
+                else
+                {
+                    doDamage();
+                    plusRolls();
+                    coinHeal();
+                }
+            }
         }
-        if (pointer.button == PointerEventData.InputButton.Left)
+        else
         {
-            if (this.transform.parent.name == "NewItem")
+            if(bm.player.coins >= this.shopValue && !bm.itemManager.isHandFull(true))
             {
-                //Add item to player
-                BattleManager._instance.addItemToHand(this);
-                BattleManager._instance.toggleScreen(screen.Path);
-            }
-            else
-            {
-                doDamage();
-                plusRolls();
-                coinHeal();
+                bm.modifyCoins(-this.shopValue);
+                this.GetComponentInParent<ShopItemContainer>().reset();
+                bm.addItemToHand(this);
+                this.removable = !this.removable;
+                bm.updateShopItems();
             }
         }
+    }
+
+    public bool canBuy() 
+    {
+        BattleManager bm = BattleManager._instance;
+        if(bm.player.coins >= this.shopValue && !bm.itemManager.isHandFull(true)) return true;
+        return false;
+    }
+
+    public void unSubscribe()
+    {
+        BattleManager._instance.OnRoll -= this.rollHeal;
+        BattleManager._instance.OnPlayerDamage -= this.brokenPiggybank;
+        BattleManager._instance.OnEnemyDeath -= this.brokenPiggybankReward;
+        BattleManager._instance.OnBattle -= this.resetUsed;
     }
 
     public bool validate(ItemType iType, Items t)
@@ -135,7 +186,7 @@ public class Item : MonoBehaviour, IPointerDownHandler
         if (!this.validate(ItemType.Passive, Items.brokenPiggybank)) return;
         Enemy en = sender as Enemy;
         this.used = true;
-        en.gameObject.GetComponent<Reward>().coins *= 2;
+        BattleManager._instance.modifyCoins(en.coinReward);
     }
 
     #endregion

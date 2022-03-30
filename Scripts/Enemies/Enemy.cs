@@ -15,6 +15,9 @@ public class Enemy : MonoBehaviour
     [Range(1, 4), Tooltip("1 -> Easy, 2 -> Medium, 3 -> Hard, 4 -> Elite")]
     public int difficultyValue;
 
+    public int coinReward;
+    public bool itemReward;
+
     public List<GameObject> allEnemeis = new List<GameObject>();
 
     void Start()
@@ -35,8 +38,18 @@ public class Enemy : MonoBehaviour
         if (HP <= 0)
         {
             //die
+            if(coinReward != 0) bm.modifyCoins(coinReward);
+            this.GetComponent<EnemySkills>().unSubscribe();
+            this.unSubscribe();
             bm.enemyDeath(this);
         }
+    }
+
+    public void unSubscribe() {
+        BattleManager._instance.OnEnemyDamage -= this.ModifyHP;
+        BattleManager._instance.OnRoll -= this.checkMinRoll;
+        BattleManager._instance.OnModifyEnemyDamage -= this.ModifyDamage;
+        BattleManager._instance.OnModifyMinRolls -= this.ModifyMinRoll;
     }
 
     public void ModifyDamage(object sender, eventArgs e)

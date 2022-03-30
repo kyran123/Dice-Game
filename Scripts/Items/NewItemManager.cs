@@ -13,11 +13,11 @@ public class NewItemManager : MonoBehaviour
 
     public void addItem(object sender, eventArgs e) {
         this.toggle(true);
-        this.ItemContainer.addItem(Instantiate(e.itemObject));
+        this.ItemContainer.addItem(e.itemObject);
     }
 
     public void deHighlight(object sender, eventArgs e) {
-        this.toggle(false);     
+        this.toggle(false);
     }
 
     public void toggle(bool toggleValue) {

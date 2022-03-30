@@ -22,5 +22,6 @@ public class ItemContainer : MonoBehaviour
     {
         Destroy(this.item);
         this.item = null;
+        BattleManager._instance.handIsFull();
     }
 }

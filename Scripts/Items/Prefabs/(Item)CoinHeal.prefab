@@ -362,5 +362,7 @@ MonoBehaviour:
   oncePerBattle: 1
   destroyOnUse: 0
   type: 6
+  removable: 1
+  isCurse: 0
   title: {fileID: 2465916621103415603}
   Description: {fileID: 8353684115572940483}

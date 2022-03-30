@@ -17,6 +17,9 @@ public class ItemManager : MonoBehaviour
         BattleManager._instance.OnAddItemToHand += this.addItemToHand;
         BattleManager._instance.OnRewardAdded += this.resetHandMsg;
         BattleManager._instance.OnRemoveRandomItem += this.removeRandomItem;
+        BattleManager._instance.OnAddEventItem += this.getEventItem;
+        BattleManager._instance.OnRedrawHand += this.redrawHand;
+        BattleManager._instance.OnToggleCurse += this.toggleCurseFlip;
     }
 
     public void resetHandMsg(object sender, eventArgs e)
@@ -27,21 +30,39 @@ public class ItemManager : MonoBehaviour
     public GameObject newItemObject;
     public void getNewItem()
     {
-        Item item = this.allItems[UnityEngine.Random.Range(0, this.allItems.Count - 1)].GetComponent<Item>();
-        if (this.itemContainers.Any(i => i.getItem() != null && i.getItem().type == item.type))
+        Item item = this.allItems[Random.Range(0, this.allItems.Count - 1)].GetComponent<Item>();
+        if (this.itemContainers.Any(i => i.getItem() != null && i.getItem().type == item.type && item.isCurse))
         {
             this.getNewItem();
         }
         else
         {
-            this.newItemObject = item.gameObject;
+            this.newItemObject = Instantiate(item.gameObject);
+        }
+    }
+
+    public Item shopItem;
+    public void getNewShopItem(List<ShopItemContainer> shopContainers)
+    {
+        Item item = this.allItems[Random.Range(0, this.allItems.Count - 1)].GetComponent<Item>();
+        if (
+            item.isCurse ||
+            shopContainers.Any(i => i.item != null && i.item.type == item.type)
+        )
+        {
+            this.getNewShopItem(shopContainers);
+        }
+        else
+        {
+            this.shopItem = Instantiate(item.gameObject).GetComponent<Item>();
+            this.shopItem.removable = false;
         }
     }
 
     public void getRandomItem(object sender, eventArgs e)
     {
         Enemy enemy = sender as Enemy;
-        if (!enemy.GetComponent<Reward>().item) return;
+        if (!enemy.itemReward) return;
         this.getNewItem();
         BattleManager._instance.showNewItem(this.newItemObject);
     }
@@ -56,19 +77,51 @@ public class ItemManager : MonoBehaviour
                 if (container.getItem() == null)
                 {
                     container.addItem(e.itemObject);
+                    BattleManager._instance.handIsFull();
                     return;
                 }
             }
         }
-        else
+    }
+
+    public void getEventItem(object sender, eventArgs e)
+    {
+        if (!this.isHandFull())
         {
-            //Hand is full and we need to select which card to discard
-            Debug.Log("Hand is full!");
-            this.text.SetActive(true);
+            if (e.itemObject != null)
+            {
+                this.newItemObject = Instantiate(e.itemObject);
+            }
+            else
+            {
+                this.getNewItem();
+            }
+            foreach (ItemContainer container in this.itemContainers)
+            {
+                if (container.getItem() == null)
+                {
+                    container.addItem(this.newItemObject);
+                    //TODO: Hide event
+                    break;
+                }
+            }
+        }
+        BattleManager._instance.handIsFull();
+    }
+
+    public void redrawHand(object sender, eventArgs e)
+    {
+        foreach (ItemContainer container in this.itemContainers)
+        {
+            if (container.item == null) continue;
+            container.removeItem();
+            this.getNewItem();
+            container.addItem(this.newItemObject);
+            BattleManager._instance.handIsFull();
         }
     }
 
-    public bool isHandFull()
+    public bool isHandFull(bool external = false)
     {
         foreach (ItemContainer container in this.itemContainers)
         {
@@ -77,6 +130,7 @@ public class ItemManager : MonoBehaviour
                 return false;
             }
         }
+        if (!external) this.text.SetActive(true);
         return true;
     }
 
@@ -91,6 +145,16 @@ public class ItemManager : MonoBehaviour
         if (fullContainers.Count() != 0)
         {
             fullContainers[Random.Range(0, fullContainers.Count())].removeItem();
+            BattleManager._instance.handIsFull();
         }
     }
+
+    public void toggleCurseFlip(object sender, eventArgs e)
+    {
+        foreach (ItemContainer container in itemContainers)
+        {
+            if (container.getItem() != null) container.getItem().removable = !container.getItem().removable;
+        }
+    }
+
 }

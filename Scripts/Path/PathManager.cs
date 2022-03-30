@@ -12,7 +12,7 @@ public class PathManager : MonoBehaviour
     public GameObject eventPrefab;
     public GameObject shopPrefab;
 
-    List<int> weights = new List<int>() { 5, 25, 15 };
+    List<int> weights = new List<int>() { 5, 25, 10 };
 
     // Start is called before the first frame update
     void Start()
@@ -24,12 +24,9 @@ public class PathManager : MonoBehaviour
     {
         //Get the amount of paths
         int amount = this.getAmountOfPaths();
-        Debug.Log($"amount: {amount}");
-        bool hasShop = false;
+        int max = 4;
         for (int i = 0; i < amount; i++)
         {
-            int max = 3;
-            if (hasShop) max--;
             switch (Random.Range(1, max))
             {
                 case 1: //monster
@@ -37,7 +34,6 @@ public class PathManager : MonoBehaviour
                     {
                         //elite
                         this.generatePrefab(elitePrefab, this.containers[i].transform);
-
                     }
                     else
                     {
@@ -50,7 +46,7 @@ public class PathManager : MonoBehaviour
                     break;
                 case 3: //shop
                     this.generatePrefab(shopPrefab, this.containers[i].transform);
-                    hasShop = true;
+                    max--;
                     break;
             }
         }
@@ -78,7 +74,6 @@ public class PathManager : MonoBehaviour
 
     public void toggle(object sender, eventArgs e)
     {
-        Debug.Log($"OnToggleScreen: {e.screenValue}");
         if (e.screenValue == screen.Path)
         {
             this.generatePaths();

@@ -20,15 +20,15 @@ public class DiceManager : MonoBehaviour
         19 - lose 2 coins
     */
     public List<List<int>> die6Sides = new List<List<int>>() {
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 1, 2, 2, 3, 4 },
+       new List<int> { 0, 1, 2, 2, 3, 4 },
+       new List<int> { 9, 1, 2, 2, 3, 4 },
+       new List<int> { 8, 1, 2, 2, 3, 4 },
+       new List<int> { 7, 1, 2, 2, 3, 4 },
+       new List<int> { 6, 1, 2, 2, 3, 4 },
+       new List<int> { 5, 1, 2, 2, 3, 4 },
+       new List<int> { 4, 1, 2, 2, 3, 4 },
+       new List<int> { 3, 1, 2, 2, 3, 4 },
+       new List<int> { 2, 1, 2, 2, 3, 4 },
        new List<int> { 1, 2, 3, 4, 5, 6 },
     };
 

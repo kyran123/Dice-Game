@@ -13,7 +13,6 @@ public class ItemManager : MonoBehaviour
 
     void Start()
     {
-        BattleManager._instance.OnEnemyDeath += this.getRandomItem;
         BattleManager._instance.OnAddItemToHand += this.addItemToHand;
         BattleManager._instance.OnRewardAdded += this.resetHandMsg;
         BattleManager._instance.OnRemoveRandomItem += this.removeRandomItem;
@@ -59,10 +58,8 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    public void getRandomItem(object sender, eventArgs e)
+    public void getRandomItem(Enemy enemy)
     {
-        Enemy enemy = sender as Enemy;
-        if (!enemy.itemReward) return;
         this.getNewItem();
         BattleManager._instance.showNewItem(this.newItemObject);
     }

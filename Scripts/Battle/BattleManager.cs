@@ -16,6 +16,8 @@ public class BattleManager : MonoBehaviour
     public int level = 1;
     public int easyRange, mediumRange, hardRange;
 
+    public screen screenState;
+
     //Event handlers
     public event EventHandler<eventArgs> OnBattle;          //When battle starts
     public event EventHandler<eventArgs> OnEnemyDamage;     //When enemy takes damage
@@ -40,6 +42,7 @@ public class BattleManager : MonoBehaviour
     public event EventHandler<eventArgs> OnRemoveDie;       //When removing a die
     public event EventHandler<eventArgs> OnToggleCurse;     //When toggling item removability
     public event EventHandler<eventArgs> OnRemoveItem;      //When removing an item
+    public event EventHandler<eventArgs> OnUpdateShop;      //When the shop gets updated
 
     public event EventHandler<eventArgs> OnToggleScreen;    //Toggling screen
 
@@ -58,7 +61,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     { //Temporary
-        generateEnemy();
+        this.OnToggleScreen?.Invoke(this, new eventArgs { screenValue = screen.Event, startEvent = true });
     }
 
     public void addDie(List<int> sides)
@@ -71,6 +74,11 @@ public class BattleManager : MonoBehaviour
         this.OnRemoveDie?.Invoke(this, new eventArgs { die = d });
     }
 
+    public void updateShop()
+    {
+        this.OnUpdateShop?.Invoke(this, new eventArgs { });
+    }
+
     public void generateEnemy()
     {
         this.OnGenerateEnemy?.Invoke(this, new eventArgs { });
@@ -78,10 +86,11 @@ public class BattleManager : MonoBehaviour
 
     public void enemyDeath(Enemy enemy)
     {
-        bool hasItemReward = enemy.itemReward;
         this.OnEnemyDeath?.Invoke(enemy, new eventArgs { });
+        bool hasItemReward = enemy.itemReward;
         Destroy(enemy.gameObject);
         if (!hasItemReward) this.toggleScreen(screen.Path);
+        else this.itemManager.getRandomItem(enemy);
     }
 
     public void showNewItem(GameObject item)
@@ -177,6 +186,7 @@ public class BattleManager : MonoBehaviour
 
     public void toggleScreen(screen screen)
     {
+        this.screenState = screen;
         this.OnToggleScreen?.Invoke(this, new eventArgs { screenValue = screen });
     }
 
@@ -195,6 +205,7 @@ public class eventArgs : EventArgs
     public GameObject itemObject;
     public List<int> individualRolls;
     public screen screenValue;
+    public bool startEvent = false;
     public Die die;
 }
 

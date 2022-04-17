@@ -48,3 +48,10 @@ public class Decision : MonoBehaviour, IPointerDownHandler
         bm.toggleScreen(screen.Path);
     }
 }
+
+[System.Serializable]
+public struct startingDecision {
+    [SerializeField]
+    public Reward reward;
+    public string Text;
+}

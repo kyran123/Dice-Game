@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     public int coinReward;
     public bool itemReward;
 
-    public List<GameObject> allEnemeis = new List<GameObject>();
+    public List<GameObject> allEnemies = new List<GameObject>();
 
     void Start()
     {

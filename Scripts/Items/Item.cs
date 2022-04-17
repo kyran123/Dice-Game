@@ -102,7 +102,7 @@ public class Item : MonoBehaviour, IPointerDownHandler
                         bm.itemManager.text.SetActive(true);
                     }
                 }
-                else
+                else if(bm.screenState == screen.Battle)
                 {
                     doDamage();
                     plusRolls();

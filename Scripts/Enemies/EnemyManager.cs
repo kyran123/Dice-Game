@@ -8,11 +8,37 @@ public class EnemyManager : MonoBehaviour
     void Start()
     {
         BattleManager._instance.OnGenerateEnemy += generateNewEnemy;
+        BattleManager._instance.OnEnemyDeath += calculateDropChance;
+        dropChance = baseDropChance;
     }
 
     public List<GameObject> allEnemies = new List<GameObject>();
 
     public GameObject currentEnemy;
+    public const float baseDropChance = 15f;
+    public float dropChance;
+    
+    public void calculateDropChance(object sender, eventArgs e)
+    {
+        Enemy enemy = currentEnemy.GetComponent<Enemy>();
+        switch(enemy.difficultyValue)
+        {
+            case 1:
+                dropChance += 5f;
+                break;
+            case 2:
+                dropChance += 10f;
+                break;
+            case 3:
+                dropChance += 15f;
+                break;
+            case 4:
+                dropChance = 100f;
+                break;
+        }
+        enemy.itemReward = dropChance >= Random.Range(0,101);
+        if(enemy.itemReward) dropChance = baseDropChance;
+    }
 
     public void generateNewEnemy(object sender, eventArgs e)
     {

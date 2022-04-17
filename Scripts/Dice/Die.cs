@@ -9,6 +9,26 @@ public class Die : MonoBehaviour
     public List<Side> sides = new List<Side>();
     public bool logged = true;
 
+    public void convertIntToSideValues(List<int> list)
+    {
+        foreach (int i in list)
+        {
+            Side side = new Side();
+            side.value = (SideValue)i;
+            sides.Add(side);
+        }
+    }
+
+    public List<int> convertSidesToIntList() 
+    {
+        List<int> intList = new List<int>();
+        foreach(Side side in this.sides)
+        {
+            intList.Add((int)side.value);
+        }
+        return intList;
+    }
+
     public int getSide()
     {
         float highestSide = 0;
@@ -19,7 +39,7 @@ public class Die : MonoBehaviour
             {
                 highestSide = side.transform.position.y;
                 BattleManager bm = BattleManager._instance;
-                switch(side.value)
+                switch (side.value)
                 {
                     case SideValue.doOneDamage:
                         bm.ModifyEnemyHP(-1);

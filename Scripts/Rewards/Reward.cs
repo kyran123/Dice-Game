@@ -18,6 +18,10 @@ public class Reward
     public bool validate(BattleManager bm)
     {
         bool flag = false;
+        if(HP != 0) 
+        {
+            flag = true;
+        }
         if (coins < 0)
         {
             if (bm.player.coins >= Mathf.Abs(coins)) flag = true;

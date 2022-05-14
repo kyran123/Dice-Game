@@ -362,7 +362,9 @@ MonoBehaviour:
   oncePerBattle: 0
   destroyOnUse: 0
   type: 5
+  value: 0
   removable: 1
   isCurse: 0
+  shopValue: 35
   title: {fileID: 1457596917843230489}
   Description: {fileID: 7692539087610805967}

@@ -73,8 +73,17 @@ public class Reward
                 case itemReward.RemoveRandom:
                     bm.removeRandomItem();
                     break;
+                case itemReward.RemoveRandomNonCurse:
+                    bm.removeRandomNonCurseItem();
+                    break;
                 case itemReward.AddRandom:
                     bm.addEventItem(specificItem);
+                    break;
+                case itemReward.AddRandomNonCurse:
+                    bm.addNonCurseEventItem();
+                    break;
+                case itemReward.AddCurse:
+                    bm.addCurseItem();
                     break;
                 case itemReward.RedrawHand:
                     bm.redrawHand();
@@ -89,7 +98,7 @@ public class Reward
                     bm.removeDie(null);
                     break;
                 case dieReward.AddRandom:
-                    bm.addDie(null);
+                    bm.addDie(new List<int>());
                     break;
             }
         }
@@ -101,7 +110,10 @@ public enum itemReward
 {
     Nothing,
     RemoveRandom,
+    RemoveRandomNonCurse,
     AddRandom,
+    AddRandomNonCurse,
+    AddCurse,
     RedrawHand
 }
 

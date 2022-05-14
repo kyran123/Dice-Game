@@ -24,10 +24,10 @@ public class DiceContainer : MonoBehaviour
     public void addDie(Die die)
     {
         this.currentDie = die;
-        string arr = "Dice: ";
+        string arr = "";
         foreach (Side side in die.sides)
         {
-            arr += (int)side.value;
+            arr += side.getValue();
             arr += " | ";
         }
         text.text = arr.Remove(arr.Length - 3);
@@ -35,10 +35,57 @@ public class DiceContainer : MonoBehaviour
 
     public void addDie(List<int> list)
     {
-        string arr = "Dice: ";
+        string arr = "";
         foreach (int side in list)
         {
-            arr += side;
+            switch((SideValue)side) {
+                case SideValue.one:
+                case SideValue.two:
+                case SideValue.three:
+                case SideValue.four:
+                case SideValue.five: 
+                case SideValue.seven: 
+                case SideValue.eight:
+                    arr += side.ToString();
+                    break; 
+                case SideValue.six:                     
+                case SideValue.nine:
+                    arr += $"{side.ToString()}.";
+                    break; 
+                case SideValue.doOneDamage:
+                    arr += "⚔";
+                    break;
+                case SideValue.doTwoDamage:
+                    arr += "⚔⚔";
+                    break;
+                case SideValue.healOne:
+                    arr += "❤";
+                    break;
+                case SideValue.healTwo:
+                    arr += "❤❤";
+                    break;
+                case SideValue.takeOneDamage:
+                    arr += "⚔";
+                    break;
+                case SideValue.takeTwoDamage:
+                    arr += "⚔⚔";
+                    break;
+                case SideValue.getOneCoin:
+                    arr += "₵";
+                    break;
+                case SideValue.getTwoCoins:
+                    arr += "₵₵";
+                    break;
+                case SideValue.loseOneCoin:
+                    arr += "₵";
+                    break;
+                case SideValue.loseTwoCoins:
+                    arr += "₵₵";
+                    break;
+                default:
+                    arr += "0";
+                    break;
+            }
             arr += " | ";
         }
         text.text = arr.Remove(arr.Length - 3);

@@ -4,21 +4,20 @@ using UnityEngine;
 
 public class EnemyDisplay : MonoBehaviour
 {
-    private Enemy enemy;
-    private Card card;
+    public Enemy enemy;
+    public Card card;
 
     void Start()
     {
-        this.enemy = this.GetComponent<Enemy>();
-        this.card = this.GetComponent<Card>();
         this.updateDisplay();
     }
 
     public void updateDisplay()
     {
+        this.card.Name.text = $"{this.enemy.enemyName}";
         this.card.HP.text = $"{this.enemy.HP}";
-        this.card.Damage.text = $"{this.enemy.damage}";
-        this.card.MinRoll.text = $"{this.enemy.minRoll}+";
+        this.card.Damage.text = $"{this.enemy.getDamage()}";
+        this.card.MinRoll.text = $"{this.enemy.getMinRoll()}+";
     }
 
 }

@@ -19,17 +19,23 @@ public class DiceManager : MonoBehaviour
         18 - lose 1 coin
         19 - lose 2 coins
     */
+
     public List<List<int>> die6Sides = new List<List<int>>() {
-       new List<int> { 0, 1, 2, 2, 3, 4 },
-       new List<int> { 9, 1, 2, 2, 3, 4 },
-       new List<int> { 8, 1, 2, 2, 3, 4 },
-       new List<int> { 7, 1, 2, 2, 3, 4 },
-       new List<int> { 6, 1, 2, 2, 3, 4 },
-       new List<int> { 5, 1, 2, 2, 3, 4 },
-       new List<int> { 4, 1, 2, 2, 3, 4 },
-       new List<int> { 3, 1, 2, 2, 3, 4 },
-       new List<int> { 2, 1, 2, 2, 3, 4 },
-       new List<int> { 1, 2, 3, 4, 5, 6 },
+        new List<int> { 9, 0, 0, 1, 0, 9 },
+        new List<int> { 12, 0, 13, 12, 13, 0 },
+        new List<int> { 19, 0, 4, 5, 17, 6 },
+        new List<int> { 0, 1, 2, 2, 3, 5 },
+        new List<int> { 0, 1, 2, 4, 5, 6 },
+        new List<int> { 14, 3, 3, 4, 4, 6 },
+        new List<int> { 0, 0, 3, 3, 6, 6 }, //Below Average ^
+        new List<int> { 1, 2, 3, 4, 5, 6 }, //Average (sum is 21)
+        new List<int> { 0, 0, 3, 3, 6, 6 }, //Above Average v
+        new List<int> { 3, 3, 4, 11, 10, 6 },
+        new List<int> { 2, 16, 17, 2, 8, 9 },
+        new List<int> { 10, 11, 4, 6, 8, 11 },
+        new List<int> { 0, 1, 3, 5, 7, 9 },
+        new List<int> { 17, 0, 2, 4, 6, 8 },
+        new List<int> { 10, 10, 12, 12, 10, 12 }
     };
 
     public GameObject dieBox;
@@ -37,10 +43,11 @@ public class DiceManager : MonoBehaviour
     public void addDie(object sender, eventArgs e)
     {
         List<int> sides;
-        if (e.individualRolls == null) sides = this.die6Sides[Random.Range(0, this.die6Sides.Count)];
+        if (e.individualRolls.Count() != 6) sides = this.die6Sides[Random.Range(0, this.die6Sides.Count)];
         else sides = e.individualRolls;
         GameObject newDie = Instantiate(die6Prefab);
         newDie.transform.SetParent(this.dieBox.transform, false);
+        newDie.transform.position = new Vector3(0, 10, 0);
         List<SideValue> allSides = new List<SideValue>();
         sides.ForEach((side) =>
         {
@@ -62,12 +69,15 @@ public class DiceManager : MonoBehaviour
         return false;
     }
 
+    public int dieCount()
+    {
+        return this.dice.Count();
+    }
+
     public void removeDie(object sender, eventArgs e)
     {
-        Debug.Log("remove die");
         Die die = e.die;
         if (die == null) die = this.dice[Random.Range(0, this.dice.Count() - 1)];
-        Debug.Log($"Die: {die}");
         this.dice.Remove(this.dice.Where(d => d.GetInstanceID() == die.GetInstanceID()).ToList().First());
         Destroy(die.gameObject);
     }
@@ -79,10 +89,28 @@ public class DiceManager : MonoBehaviour
 
     void Start()
     {
-        this.addDie(null, new eventArgs {});
-        this.addDie(null, new eventArgs {});
+        this.addDie(this, new eventArgs { individualRolls = new List<int>() { 1, 2, 3, 4, 5, 6 } });
         BattleManager._instance.OnAddDie += this.addDie;
         BattleManager._instance.OnRemoveDie += this.removeDie;
+        BattleManager._instance.OnEnemyDeath += this.onEnemyDeath;
+        BattleManager._instance.OnBattle += this.battleStart;
+    }
+
+    public void onEnemyDeath(object sender, eventArgs e)
+    {
+        foreach(Die die in dice)
+        {
+            die.logged = true;
+        }
+        cleared = true;
+    }
+
+    public void battleStart(object sender, eventArgs e)
+    {
+        foreach(Die die in dice)
+        {
+            die.logged = true;
+        }
     }
 
     void Update()
@@ -101,23 +129,24 @@ public class DiceManager : MonoBehaviour
                 {
                     if (dice[index].GetComponent<Rigidbody>().IsSleeping())
                     {
-                        dice[index].logged = true;
                         diceResults.Add(dice[index].getSide());
+                        dice[index].logged = true;
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.Space) && cleared)
+                if (Input.GetKeyDown(KeyCode.Space) && cleared && !BattleManager._instance.nItemManager.hasItem() && BattleManager._instance.screenState == screen.Battle)
                 {
                     if (index == dice.Count - 1) cleared = false;
                     dice[index].logged = false;
+                    dice[index].transform.position = new Vector3(20f, 10f, -50f);
                     dice[index].GetComponent<Rigidbody>().AddForce(new Vector3(
+                        Random.Range(-300f, -100f),
                         Random.Range(-100f, 100f),
-                        1000f,
-                        Random.Range(-100f, 100f)
+                        Random.Range(1800f, 2000f)
                     ), ForceMode.Force);
                     dice[index].GetComponent<Rigidbody>().AddTorque(new Vector3(
-                        Random.Range(-275f, 275f),
-                        Random.Range(-275f, 275f),
-                        Random.Range(-275f, 275f)
+                        Random.Range(-350f, 350f),
+                        Random.Range(-350f, 350f),
+                        Random.Range(-350f, 350f)
                     ));
                 }
             }

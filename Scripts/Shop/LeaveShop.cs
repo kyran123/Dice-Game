@@ -7,6 +7,7 @@ public class LeaveShop : MonoBehaviour, IPointerDownHandler
 {
     public void OnPointerDown(PointerEventData pointer)
     {
+        this.GetComponentInParent<ShopManager>().deleteItems();
         BattleManager._instance.toggleScreen(screen.Path);
     }
 }

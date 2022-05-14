@@ -19,6 +19,30 @@ public class Player : MonoBehaviour {
         BattleManager._instance.OnModifyCoins += this.ModifyCoins;
         BattleManager._instance.OnToggleScreen += this.toggle;
         BattleManager._instance.OnModifyPlayerDamage += this.ModifyPlayerDamage;
+        
+        //Debug
+        BattleManager._instance.debugSetPlayerHP += this.setHP;
+        BattleManager._instance.debugSetCoins += this.setCoins;
+        BattleManager._instance.debugSetPlayerDamage += this.setDamage;
+    }
+
+    public void setHP(object sender, eventArgs e)
+    {
+        this.HP = e.debug_int;
+        this.updateDisplay();
+        if(HP <= 0 ) {
+            this.death(this, new eventArgs { });
+        }
+    }
+
+    public int getDamage() {
+        return this.damage + BattleManager._instance.itemManager.getItemsValue(Items.BigStick);
+    }
+
+    public void setDamage(object sender, eventArgs e)
+    {
+        this.damage = e.debug_int;
+        this.updateDisplay();
     }
 
     // positive -> healing , negative -> damage
@@ -26,8 +50,27 @@ public class Player : MonoBehaviour {
         HP += e.damage;
         this.updateDisplay();
         if(HP <= 0 ) {
-            //die
-            //check for player death
+            this.death(this, new eventArgs { });
+        }
+    }
+
+    public void setCoins(object sender, eventArgs e)
+    {
+        this.coins = e.debug_int;
+        updateDisplay();
+    }
+
+    public void death(object sender, eventArgs e)
+    {
+        if(BattleManager._instance.itemManager.hasItem(Items.CyclingHelmet))
+        {
+            HP = 1;
+            BattleManager._instance.removeCyclingHelmet();
+            updateDisplay();
+        }
+        else
+        {
+            BattleManager._instance.playerDeath();
         }
     }
 
@@ -40,14 +83,14 @@ public class Player : MonoBehaviour {
 
     // positive -> add / negative -> subtract
     public void ModifyCoins(object sender, eventArgs e) {
-        if(e.coins < 0 && coins < Mathf.Abs(e.coins)) return;
         coins += e.coins;
+        if(coins < 0) coins = 0;
         updateDisplay();
     }
 
     public void updateDisplay() {
         this.HPText.text = $"{this.HP}";
-        this.damageText.text = $"{this.damage}";
+        this.damageText.text = $"{this.getDamage()}";
         this.coinsText.text = $"{this.coins}";
     }
 

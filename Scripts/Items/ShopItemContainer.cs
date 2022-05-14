@@ -26,6 +26,15 @@ public class ShopItemContainer : MonoBehaviour
         }
     }
 
+    public void removeItem()
+    {
+        if(this.item != null && this.transform.childCount > 1)
+        {
+            Destroy(this.item.gameObject);
+        }
+        this.item = null;
+    }
+
     public void reset()
     {
         this.text.text = "";

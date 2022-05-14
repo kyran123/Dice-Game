@@ -31,51 +31,62 @@ public class Die : MonoBehaviour
 
     public int getSide()
     {
+        BattleManager bm = BattleManager._instance;
+        Side rolled = this.sides[0];
         float highestSide = 0;
-        int value = 0;
-        foreach (Side side in this.sides)
+        foreach(Side side in this.sides)
         {
             if (side.transform.position.y > highestSide)
             {
                 highestSide = side.transform.position.y;
-                BattleManager bm = BattleManager._instance;
-                switch (side.value)
-                {
-                    case SideValue.doOneDamage:
-                        bm.ModifyEnemyHP(-1);
-                        break;
-                    case SideValue.doTwoDamage:
-                        bm.ModifyEnemyHP(-2);
-                        break;
-                    case SideValue.getOneCoin:
-                        bm.modifyCoins(1);
-                        break;
-                    case SideValue.getTwoCoins:
-                        bm.modifyCoins(2);
-                        break;
-                    case SideValue.loseOneCoin:
-                        bm.modifyCoins(-1);
-                        break;
-                    case SideValue.loseTwoCoins:
-                        bm.modifyCoins(-2);
-                        break;
-                    case SideValue.healOne:
-                        bm.ModifyPlayerHP(1);
-                        break;
-                    case SideValue.healTwo:
-                        bm.ModifyPlayerHP(2);
-                        break;
-                    case SideValue.takeOneDamage:
-                        bm.ModifyPlayerHP(-1);
-                        break;
-                    case SideValue.takeTwoDamage:
-                        bm.ModifyPlayerHP(-2);
-                        break;
-                }
-                value = side.getValue();
+                rolled = side;
             }
         }
-        return value;
+        switch (rolled.value)
+        {
+            case SideValue.one:
+            case SideValue.two:
+            case SideValue.three:
+            case SideValue.four:
+            case SideValue.five: 
+            case SideValue.six: 
+            case SideValue.seven: 
+            case SideValue.eight: 
+            case SideValue.nine: 
+                return (int)rolled.value;
+            case SideValue.doOneDamage:
+                bm.ModifyEnemyHP(-1);
+                return 0;
+            case SideValue.doTwoDamage:
+                bm.ModifyEnemyHP(-2);
+                return 0;
+            case SideValue.getOneCoin:
+                bm.modifyCoins(1);
+                return 0;
+            case SideValue.getTwoCoins:
+                bm.modifyCoins(2);
+                return 0;
+            case SideValue.loseOneCoin:
+                bm.modifyCoins(-1);
+                return 0;
+            case SideValue.loseTwoCoins:
+                bm.modifyCoins(-2);
+                return 0;
+            case SideValue.healOne:
+                bm.ModifyPlayerHP(1);
+                return 0;
+            case SideValue.healTwo:
+                bm.ModifyPlayerHP(2);
+                return 0;
+            case SideValue.takeOneDamage:
+                bm.ModifyPlayerHP(-1);
+                return 0;
+            case SideValue.takeTwoDamage:
+                bm.ModifyPlayerHP(-2);
+                return 0;
+            default:
+                return 0;
+        }
     }
 
     public void updateSides(List<SideValue> newSides)

@@ -16,6 +16,12 @@ public class NewItemManager : MonoBehaviour
         this.ItemContainer.addItem(e.itemObject);
     }
 
+    public bool hasItem()
+    {
+        if(this.ItemContainer.getItem() != null) return true;
+        return false;
+    }
+
     public void deHighlight(object sender, eventArgs e) {
         this.toggle(false);
     }

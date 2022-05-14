@@ -9,6 +9,7 @@ public class ItemContainer : MonoBehaviour
     public void addItem(GameObject itemGO)
     {
         this.item = itemGO;
+        this.item.GetComponent<Item>().subscribe();
         this.item.transform.SetParent(this.transform, false);
     }
 
@@ -20,6 +21,7 @@ public class ItemContainer : MonoBehaviour
 
     public void removeItem()
     {
+        this.item.GetComponent<Item>().unSubscribe();
         Destroy(this.item);
         this.item = null;
         BattleManager._instance.handIsFull();

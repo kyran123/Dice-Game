@@ -7,6 +7,12 @@ public class GameMenuManager : MonoBehaviour
 {
     public GameObject battleCanvas;
     public GameObject background;
+    public GameObject deathScreen;
+
+    void Start()
+    {
+        BattleManager._instance.OnToggleScreen += this.showDeathScreen;
+    }
 
     void Update()
     {
@@ -20,6 +26,18 @@ public class GameMenuManager : MonoBehaviour
     {
         this.battleCanvas.SetActive(!this.battleCanvas.activeSelf);
         this.background.SetActive(!this.background.activeSelf);
+    }
+
+    public void showDeathScreen(object sender, eventArgs args)
+    {
+        if(args.screenValue == screen.GameOver)
+        {
+            this.deathScreen.SetActive(true);
+        }
+        else 
+        {
+            this.deathScreen.SetActive(false);
+        }        
     }
 
     public void restart()

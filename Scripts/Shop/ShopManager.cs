@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class ShopManager : MonoBehaviour
 {
@@ -39,6 +40,14 @@ public class ShopManager : MonoBehaviour
         {
             bm.itemManager.getNewShopItem(this.itemContainers);
             container.addItem(bm.itemManager.shopItem);
+        }
+    }
+
+    public void deleteItems()
+    {
+        foreach(ShopItemContainer container in this.itemContainers)
+        {
+            container.removeItem();
         }
     }
 

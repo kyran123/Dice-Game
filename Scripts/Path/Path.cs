@@ -12,25 +12,29 @@ public class Path : MonoBehaviour, IPointerDownHandler
 
     public pathType type;
 
-    void Start() {
-        if(isRandom) this.GetComponent<Image>().sprite = questionSprite;
+    void Start()
+    {
+        if (isRandom) this.GetComponent<Image>().sprite = questionSprite;
     }
 
     public void OnPointerDown(PointerEventData pointer)
     {
-        BattleManager._instance.level ++;
-        switch(type)
+        switch (type)
         {
             case pathType.Monster:
-                BattleManager._instance.toggleScreen(screen.Battle);
                 BattleManager._instance.generateEnemy();
-            break;
+                BattleManager._instance.toggleScreen(screen.Battle);
+                break;
+            case pathType.Elite:
+                BattleManager._instance.generateEnemy(true);
+                BattleManager._instance.toggleScreen(screen.Battle);
+                break;
             case pathType.Event:
                 BattleManager._instance.toggleScreen(screen.Event);
-            break;
+                break;
             case pathType.Shop:
                 BattleManager._instance.toggleScreen(screen.Shop);
-            break;
+                break;
         }
     }
 
